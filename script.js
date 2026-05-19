@@ -1,47 +1,24 @@
-const navbar = document.getElementById("navbar");
+﻿const navbar = document.getElementById("navbar");
 const hamburger = document.getElementById("hamburger");
 const mobileMenu = document.getElementById("mobileMenu");
 
-const STORAGE_KEY = "revista_contenido_local_v1";
-const fallbackContent = {
-  editions: [
-    {
-      current: true,
-      title: "Vol. 6 - 2026",
-      description: "Vida estudiantil, proyectos y Sociedad Cientifica de Ingenieria Industrial.",
-      pdf: "vol6-2026.pdf",
-    },
-    {
-      current: false,
-      title: "Vol. 5 - 2025",
-      description: "Logistica, operaciones y experiencias de campo en industria boliviana.",
-      pdf: "vol5-2025.pdf",
-    },
-    {
-      current: false,
-      title: "Vol. 4 - 2024",
-      description: "Investigacion aplicada y articulos de innovacion estudiantil.",
-      pdf: "vol4-2024.pdf",
-    },
-  ],
-
-};
-
 window.addEventListener("scroll", () => {
-  navbar.classList.toggle("scrolled", window.scrollY > 24);
+  if (navbar) navbar.classList.toggle("scrolled", window.scrollY > 24);
 });
 
-hamburger.addEventListener("click", () => {
-  const isOpen = mobileMenu.classList.toggle("open");
-  hamburger.setAttribute("aria-expanded", String(isOpen));
-});
-
-mobileMenu.querySelectorAll("a").forEach((link) => {
-  link.addEventListener("click", () => {
-    mobileMenu.classList.remove("open");
-    hamburger.setAttribute("aria-expanded", "false");
+if (hamburger && mobileMenu) {
+  hamburger.addEventListener("click", () => {
+    const isOpen = mobileMenu.classList.toggle("open");
+    hamburger.setAttribute("aria-expanded", String(isOpen));
   });
-});
+
+  mobileMenu.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      mobileMenu.classList.remove("open");
+      hamburger.setAttribute("aria-expanded", "false");
+    });
+  });
+}
 
 const filterButtons = document.querySelectorAll(".filter-btn");
 const articleCards = document.querySelectorAll(".article-card");
@@ -59,26 +36,20 @@ filterButtons.forEach((button) => {
   });
 });
 
-const reveals = document.querySelectorAll(".reveal");
 const observer = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("visible");
-      }
+      if (entry.isIntersecting) entry.target.classList.add("visible");
     });
   },
-  {
-    threshold: 0.12,
-    rootMargin: "0px 0px -40px 0px",
-  }
+  { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
 );
-
-reveals.forEach((item) => observer.observe(item));
 
 function observeNewReveals() {
   document.querySelectorAll(".reveal").forEach((item) => observer.observe(item));
 }
+
+observeNewReveals();
 
 function esc(value) {
   return String(value)
@@ -89,40 +60,22 @@ function esc(value) {
     .replaceAll("'", "&#39;");
 }
 
-function deepClone(obj) {
-  return JSON.parse(JSON.stringify(obj));
-}
-
 function getBaseContent() {
   if (window.REVISTA_CONTENIDO && typeof window.REVISTA_CONTENIDO === "object") {
-    return deepClone(window.REVISTA_CONTENIDO);
+    return window.REVISTA_CONTENIDO;
   }
-  return deepClone(fallbackContent);
+
+  return {
+    editions: [
+      {
+        current: true,
+        title: "Vol. 6 - 2026",
+        description: "Vida estudiantil, proyectos y Sociedad Cientifica de Ingenieria Industrial.",
+        pdf: "vol6-2026.pdf"
+      }
+    ]
+  };
 }
-
-function getStoredContent() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (!parsed || typeof parsed !== "object") return null;
-    return parsed;
-  } catch {
-    return null;
-  }
-}
-
-function saveContent(content) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(content, null, 2));
-}
-
-function getContent() {
-  const stored = getStoredContent();
-  if (stored) return stored;
-  return getBaseContent();
-}
-
-
 
 function renderEditions(content) {
   const container = document.getElementById("editionsContainer");
@@ -134,7 +87,7 @@ function renderEditions(content) {
       <article class="edition-card reveal">
         <p class="edition-pill">Sin datos</p>
         <h3>No hay ediciones cargadas</h3>
-        <p>Agrega items en revistas/contenido.js o desde el gestor local.</p>
+        <p>Agrega items en revistas/contenido.js.</p>
       </article>
     `;
     observeNewReveals();
@@ -145,13 +98,13 @@ function renderEditions(content) {
     .map((edition, index) => {
       const delayClass = index % 3 === 1 ? " reveal-delay" : index % 3 === 2 ? " reveal-delay-2" : "";
       const pill = edition.current ? "Edicion actual" : "Archivo";
-      const pdf = edition.pdf || "#";
+
       return `
         <article class="edition-card reveal${delayClass}">
           <p class="edition-pill">${esc(pill)}</p>
           <h3>${esc(edition.title || "Sin titulo")}</h3>
           <p>${esc(edition.description || "Sin descripcion")}</p>
-          <a href="revistas/${esc(pdf)}" target="_blank" rel="noopener">Abrir PDF</a>
+          <a href="revistas/${esc(edition.pdf || "#")}" target="_blank" rel="noopener">Abrir PDF</a>
         </article>
       `;
     })
@@ -159,8 +112,6 @@ function renderEditions(content) {
 
   observeNewReveals();
 }
-
-
 
 function handleSubscribe() {
   const input = document.getElementById("emailInput");
@@ -180,6 +131,4 @@ function handleSubscribe() {
 
 window.handleSubscribe = handleSubscribe;
 
-const content = getContent();
-renderEditions(content);
-
+renderEditions(getBaseContent());
