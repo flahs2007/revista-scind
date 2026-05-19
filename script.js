@@ -1,4 +1,4 @@
-﻿const navbar = document.getElementById("navbar");
+const navbar = document.getElementById("navbar");
 const hamburger = document.getElementById("hamburger");
 const mobileMenu = document.getElementById("mobileMenu");
 
@@ -24,18 +24,7 @@ const fallbackContent = {
       pdf: "vol4-2024.pdf",
     },
   ],
-  videos: [
-    {
-      title: "Visita tecnica a planta",
-      description: "Resumen de aprendizaje en procesos productivos.",
-      file: "demo-visita.mp4",
-    },
-    {
-      title: "Feria de proyectos",
-      description: "Presentaciones de equipos de Ingenieria Industrial.",
-      file: "demo-feria.mp4",
-    },
-  ],
+
 };
 
 window.addEventListener("scroll", () => {
@@ -133,13 +122,7 @@ function getContent() {
   return getBaseContent();
 }
 
-function resolveVideoSrc(file) {
-  if (!file) return "";
-  if (file.startsWith("http://") || file.startsWith("https://") || file.startsWith("/")) {
-    return file;
-  }
-  return `revistas/videos/${file}`;
-}
+
 
 function renderEditions(content) {
   const container = document.getElementById("editionsContainer");
@@ -177,113 +160,7 @@ function renderEditions(content) {
   observeNewReveals();
 }
 
-function renderVideos(content) {
-  const container = document.getElementById("videosContainer");
-  if (!container) return;
 
-  const videos = Array.isArray(content.videos) ? content.videos : [];
-  if (!videos.length) {
-    container.innerHTML = `
-      <article class="video-card reveal">
-        <h3>No hay videos cargados</h3>
-        <p>Usa el gestor para agregar videos publicados.</p>
-      </article>
-    `;
-    observeNewReveals();
-    return;
-  }
-
-  container.innerHTML = videos
-    .map((video, index) => {
-      const delayClass = index % 3 === 1 ? " reveal-delay" : index % 3 === 2 ? " reveal-delay-2" : "";
-      const src = resolveVideoSrc(video.file || "");
-      return `
-        <article class="video-card reveal${delayClass}">
-          <video controls preload="metadata">
-            <source src="${esc(src)}" type="video/mp4" />
-            Tu navegador no soporta video HTML5.
-          </video>
-          <h3>${esc(video.title || "Sin titulo")}</h3>
-          <p>${esc(video.description || "Sin descripcion")}</p>
-        </article>
-      `;
-    })
-    .join("");
-
-  observeNewReveals();
-}
-
-function showManagerMsg(message, ok = true) {
-  const msg = document.getElementById("videoManagerMsg");
-  if (!msg) return;
-  msg.textContent = message;
-  msg.style.color = ok ? "#0f766e" : "#b91c1c";
-}
-
-function downloadContentFile(content) {
-  const payload = `window.REVISTA_CONTENIDO = ${JSON.stringify(content, null, 2)};\n`;
-  const blob = new Blob([payload], { type: "text/javascript" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "contenido.js";
-  link.click();
-  URL.revokeObjectURL(link.href);
-}
-
-function wireVideoManager() {
-  const addBtn = document.getElementById("addVideoBtn");
-  const downloadBtn = document.getElementById("downloadContentBtn");
-  const resetBtn = document.getElementById("resetContentBtn");
-
-  if (!addBtn || !downloadBtn || !resetBtn) return;
-
-  addBtn.addEventListener("click", () => {
-    const titleInput = document.getElementById("videoTitleInput");
-    const descInput = document.getElementById("videoDescInput");
-    const fileInput = document.getElementById("videoFileInput");
-
-    const title = titleInput.value.trim();
-    const description = descInput.value.trim();
-    const file = fileInput.value.trim();
-
-    if (!title || !description || !file) {
-      showManagerMsg("Completa titulo, descripcion y archivo de video.", false);
-      return;
-    }
-
-    const content = getContent();
-    if (!Array.isArray(content.videos)) content.videos = [];
-
-    content.videos.unshift({
-      title,
-      description,
-      file,
-    });
-
-    saveContent(content);
-    renderVideos(content);
-
-    titleInput.value = "";
-    descInput.value = "";
-    fileInput.value = "";
-
-    showManagerMsg("Video agregado. No olvides copiar el archivo en revistas/videos/", true);
-  });
-
-  downloadBtn.addEventListener("click", () => {
-    const content = getContent();
-    downloadContentFile(content);
-    showManagerMsg("Se descargo contenido.js. Reemplazalo en revistas/contenido.js", true);
-  });
-
-  resetBtn.addEventListener("click", () => {
-    localStorage.removeItem(STORAGE_KEY);
-    const baseContent = getBaseContent();
-    renderEditions(baseContent);
-    renderVideos(baseContent);
-    showManagerMsg("Contenido restablecido a la version base.", true);
-  });
-}
 
 function handleSubscribe() {
   const input = document.getElementById("emailInput");
@@ -305,5 +182,4 @@ window.handleSubscribe = handleSubscribe;
 
 const content = getContent();
 renderEditions(content);
-renderVideos(content);
-wireVideoManager();
+

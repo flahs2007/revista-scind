@@ -1,4 +1,4 @@
-﻿window.REVISTA_CONTENIDO = {
+window.REVISTA_CONTENIDO = {
   editions: [
     {
       current: true,
@@ -17,18 +17,6 @@
       title: "Vol. 4 - 2024",
       description: "Investigacion aplicada y articulos de innovacion estudiantil.",
       pdf: "vol4-2024.pdf"
-    }
-  ],
-  videos: [
-    {
-      title: "Visita tecnica a planta",
-      description: "Resumen de aprendizaje en procesos productivos.",
-      file: "demo-visita.mp4"
-    },
-    {
-      title: "Feria de proyectos",
-      description: "Presentaciones de equipos de Ingenieria Industrial.",
-      file: "demo-feria.mp4"
     }
   ]
 };
