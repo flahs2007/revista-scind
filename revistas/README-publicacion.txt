@@ -1,15 +1,19 @@
-﻿Publicacion facil (sin servidor local)
+﻿Publicacion super facil (sin formulario web)
 
-Este sitio funciona con doble clic en index.html.
-El contenido dinamico sale de: revistas/contenido.js
+Pasos:
+1) Copia tus PDF dentro de la carpeta: revistas/
+2) Ejecuta: actualizar-ediciones.cmd
+3) Recarga index.html
 
-Publicar una nueva edicion (PDF)
-1) Copia el PDF en: revistas/
-   Ejemplo: vol7-2026.pdf
-2) Abre revistas/contenido.js
-3) En "editions", agrega un nuevo bloque al inicio.
-4) Pon "current: true" en la nueva y "current: false" en la anterior.
-5) Guarda y recarga la pagina.
+Eso hace automaticamente:
+- Detecta todos los PDF en revistas/
+- Actualiza revistas/contenido.js
+- Marca como edicion actual el PDF mas reciente
+
+Formato recomendado de nombre PDF:
+- Vol-7-2026.pdf
+- Edicion-Especial-2026.pdf
 
 Nota:
-- El nombre de "pdf" debe coincidir exactamente con el archivo real.
+- El titulo se genera desde el nombre del archivo.
+- Si quieres cambiar descripciones personalizadas, edita luego revistas/contenido.js
