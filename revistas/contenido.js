@@ -2,9 +2,9 @@
     "editions":  [
                      {
                          "current":  true,
-                         "title":  "lab 5",
+                         "title":  "quimica chang 13ed",
                          "description":  "Edicion publicada por la Sociedad Cientifica de Ingenieria Industrial.",
-                         "pdf":  "lab 5.pdf"
+                         "pdf":  "quimica-chang-13ed.pdf"
                      }
                  ]
 };
