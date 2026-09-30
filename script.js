@@ -371,12 +371,12 @@ function initComicViewer() {
     if (isStripMode) {
       if (singleViewEl) singleViewEl.style.display = "none";
       if (stripViewEl) stripViewEl.style.display = "flex";
-      if (btnToggleMode) btnToggleMode.textContent = "📄 Modo Pagina";
+      if (btnToggleMode) btnToggleMode.textContent = "Modo Pagina";
       renderStripView();
     } else {
       if (stripViewEl) stripViewEl.style.display = "none";
       if (singleViewEl) singleViewEl.style.display = "flex";
-      if (btnToggleMode) btnToggleMode.textContent = "📜 Modo Tira";
+      if (btnToggleMode) btnToggleMode.textContent = "Modo Tira";
       queueRenderPage(pageNum);
     }
   }
